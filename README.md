@@ -274,21 +274,6 @@ this repository. It does not declare an independent Origo version range.
 | `highlightZIndex` | `10` | Z-index for the highlight layer. |
 | `localization` | `undefined` | Optional Origo localization object. If provided, labels are read using the plugin name as the parent key. |
 
-### Legacy compatibility options
-
-These options remain accepted so existing configurations continue to work.
-Prefer `searchOperator` for operator selection and `maxRequestQueryLength` for
-request-length handling in new configurations.
-
-| Option | Default | Description |
-| --- | --- | --- |
-| `filterNeedsSearchText` | `"Skriv en sökning innan du filtrerar lagret."` | Deprecated and currently ignored. Input validation uses `typeMoreText` and the numeric validation messages. |
-| `searchMode` | `"text"` | Legacy default search mode. Use `"text"` for text operators or `"numeric"` for numeric operators. Ignored when `searchOperator` is set. |
-| `textMatchMode` | `"contains"` | Legacy default text matching mode. Use `"contains"` for contains matching or `"startsWith"` for starts-with matching. Ignored when `searchOperator` is set. |
-| `numericComparisonMode` | `"equals"` | Legacy default numeric comparison mode. Use `"equals"`, `"greaterThan"`, `"lessThan"`, or `"between"`. Ignored when `searchOperator` is set. |
-| `maxWfsQueryLength` | value of `maxRequestQueryLength` | Deprecated alias for `maxRequestQueryLength`. |
-| `zoomOnSubmit` | `true` | Legacy-named option that controls whether the explicit zoom-to-results action fits the map to matching features. It does not change form-submit behavior. |
-| `highlightOnSubmit` | `true` | Legacy-named option that controls highlighting by the explicit zoom-to-results action. It does not change form-submit behavior. |
 
 ## Layer configuration notes
 
