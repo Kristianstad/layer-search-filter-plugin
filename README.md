@@ -27,7 +27,7 @@ map. Register the global `LayerSearchFilter` factory with Origo:
 <script src="js/origo.js"></script>
 <script src="plugins/layer_search_filter/layer_search_filter.js"></script>
 <script>
-  const origo = Origo('index.json', {
+  var origo = Origo('index.json', {
     controls: {
       layer_search_filter: LayerSearchFilter
     }
@@ -51,13 +51,28 @@ use their defaults can be omitted:
       "expanded": true
     }
   },
-  {
-    "name": "layer_search_filter",
-    "options": {
-      "buttonText": "Sök i detta lager",
-      "searchableAttributes": "layer"
+      {
+      "name": "layer_search_filter",
+      "options": {
+        "filterType": "auto",
+        "minLength": 2,
+        "limit": 100,
+        "zoomToExtentLimit": 5000,
+        "featureInfoForResultsLimit": 250,
+        "layerSearchEnabled": true,
+        "title": "Sök i lager",
+        "placeholder": "Sök i detta lager",
+        "buttonText": "",
+        "showLayerVisibilityButton": true,
+        "showFilterButton": true,
+        "showZoomToResultsButton": true,
+        "showFeatureInfoForResultsButton": true,
+        "queryableOnly": false,
+        "activateLayerOnSuggestionClick": false,
+        "includeExistingCqlFilter": true,
+        "searchableAttributes": "layer"
+      }
     }
-  }
 ]
 ```
 
@@ -525,32 +540,6 @@ restricts remote WFS requests to the current map extent. Targets without a
 
 The plugin CSS uses the `o-layer_search_filter` class prefix.
 
-Important selectors include:
-
-- `.o-layer_search_filter`
-- `.o-layer_search_filter__activate-button`
-- `.o-layer_search_filter__actions`
-- `.o-layer_search_filter__footer`
-- `.o-layer_search_filter__footer--docked`
-- `.o-layer_search_filter__scroll-container--docked-footer`
-- `.o-layer_search_filter__status`
-- `.o-layer_search_filter__visibility-button`
-- `.o-layer_search_filter__action-button`
-- `.o-layer_search_filter__filter-button`
-- `.o-layer_search_filter__zoom-to-results-button`
-- `.o-layer_search_filter__feature-info-results-button`
-- `.o-layer_search_filter__close-button`
-- `.o-layer_search_filter__operator`
-- `.o-layer_search_filter__operator-button`
-- `.o-layer_search_filter__operator-menu`
-- `.o-layer_search_filter__operator-select`
-- `.o-layer_search_filter__input`
-- `.o-layer_search_filter__between-input`
-- `.o-layer_search_filter__attribute-button`
-- `.o-layer_search_filter__result-button`
-- `.o-layer_search_filter-suggestions`
-
-Override these selectors in project CSS if the search UI needs project-specific styling.
 
 ## Plugin development
 
