@@ -76,14 +76,7 @@ use their defaults can be omitted:
 ]
 ```
 
-This example restricts searches to layer `attributes` that are confirmed by
-discovery. Use the default `"all"` when every discovered string and numeric
-attribute should be searchable.
 
-The repository's [HTML integration](../../index.html) and
-[map configuration](../../index.json) form a working, customized demo. Its
-non-default limits and behavior choices are project-specific, not recommended
-defaults.
 
 ### Runtime assets
 
