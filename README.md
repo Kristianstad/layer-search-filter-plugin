@@ -25,7 +25,7 @@ map. Register the global `LayerSearchFilter` factory with Origo:
 
 ```html
 <script src="js/origo.js"></script>
-<script src="plugins/layer_search_filter/layer_search_filter.js"></script>
+<script src="plugins/layer_search_filter/layer_search_filter.min.js"></script>
 <script>
   var origo = Origo('index.json', {
     controls: {
