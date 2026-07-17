@@ -1,0 +1,43 @@
+.o-map .o-layer-filter-active,
+.o-map .o-layer_search_filter__legend-filter-active {
+  position: relative;
+}
+
+.o-map .o-layer-filter-active::after,
+.o-map .o-layer_search_filter__legend-filter-active::after {
+  background: #0099ff;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  box-sizing: border-box;
+  content: "";
+  height: 0.45rem;
+  pointer-events: none;
+  position: absolute;
+  right: -0.05rem;
+  top: -0.05rem;
+  width: 0.45rem;
+  z-index: 1;
+}
+
+.o-layer_search_filter {
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+}
+
+.o-layer_search_filter__form {
+  margin: 0;
+  width: 100%;
+}
+
+.o-layer_search_filter__form.hidden,
+.o-layer_search_filter__activate-button.hidden,
+.o-layer_search_filter__actions.hidden,
+.o-layer_search_filter__attributes.hidden,
+.o-layer_search_filter__footer.hidden,
+.o-layer_search_filter__operator.hidden,
+.o-layer_search_filter__between-control.hidden {
+  display: none;
+}
+

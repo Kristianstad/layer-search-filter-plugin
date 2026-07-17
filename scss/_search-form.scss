@@ -1,0 +1,121 @@
+.o-layer_search_filter__control {
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 9999px;
+  box-shadow: none;
+  box-sizing: border-box;
+  min-height: 2.5rem;
+  overflow: hidden;
+}
+
+.o-layer_search_filter__input {
+  background: transparent;
+  border: 0;
+  border-radius: 9999px;
+  box-sizing: border-box;
+  flex: 1 1 auto;
+  font-size: 0.875rem;
+  height: 2.5rem;
+  line-height: 1rem;
+  margin: 0;
+  min-width: 0;
+  overflow: hidden;
+  padding: 0 0.75rem;
+  width: auto;
+}
+
+.o-map .o-layer_search_filter__control.o-search input.o-layer_search_filter__input {
+  box-sizing: border-box;
+  font-size: 0.875rem;
+  line-height: 1rem;
+  margin: 0;
+  padding: 0 0.75rem;
+  width: auto;
+}
+
+.o-layer_search_filter__input:focus {
+  outline: none;
+}
+
+.o-layer_search_filter__input::-ms-clear {
+  display: none;
+}
+
+.o-layer_search_filter__between-control {
+  display: flex;
+  margin-top: 0.35rem;
+}
+
+.o-layer_search_filter__between-input {
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 9999px;
+  box-sizing: border-box;
+  font-size: 0.875rem;
+  height: 2.5rem;
+  line-height: 1rem;
+  margin: 0;
+  min-width: 0;
+  overflow: hidden;
+  padding: 0 0.75rem;
+  width: 100%;
+}
+
+.o-layer_search_filter__between-input:focus {
+  outline: 2px solid rgba(0, 153, 255, 0.45);
+  outline-offset: 1px;
+}
+
+.o-layer_search_filter__icon-button {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  display: flex;
+  height: 2.5rem;
+  justify-content: center;
+  padding: 0;
+}
+
+.o-layer_search_filter__icon-button .icon {
+  align-items: center;
+  display: flex;
+  height: 1.5rem;
+  justify-content: center;
+  width: 1.5rem;
+}
+
+.o-layer_search_filter__icon-button svg {
+  fill: #777;
+  height: 1.5rem;
+  width: 1.5rem;
+}
+
+.o-layer_search_filter__control.o-search-true .o-search-button,
+.o-layer_search_filter__control.o-search-false .o-search-button-close {
+  display: none;
+}
+
+.o-layer_search_filter__status {
+  flex: 1 1 auto;
+  font-size: 0.75rem;
+  line-height: 1.2;
+  margin-top: 0;
+  min-height: 1.2em;
+  min-width: 0;
+}
+
+.o-layer_search_filter__status.empty,
+.o-layer_search_filter__status.hint,
+.o-layer_search_filter__status.loading {
+  color: #555;
+}
+
+.o-layer_search_filter__status.error {
+  color: #b00020;
+}
+
+.o-layer_search_filter__status.success {
+  color: #286f2d;
+}
+

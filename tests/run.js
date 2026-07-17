@@ -1,0 +1,11 @@
+import './encoding.test.js';
+import './lifecycle.test.js';
+import './local-geojson.test.js';
+import './map-results.test.js';
+import './plugin-options.test.js';
+import './protocol.test.js';
+import './search-filter.test.js';
+import './search-panel-view.test.js';
+import './search-results.test.js';
+import './search-execution.test.js';
+import './webpack-config.test.js';

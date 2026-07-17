@@ -1,0 +1,27 @@
+{
+  "name": "@origo/layer-search-filter",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:js": "webpack --config webpack.config.cjs --mode production",
+    "build:css": "sass --style=expanded --no-source-map scss/layer_search_filter.scss layer_search_filter.css",
+    "build": "npm run build:js && npm run build:css",
+    "build:js:dev": "webpack --config webpack.config.cjs --mode development",
+    "build:dev": "npm run build:js:dev && npm run build:css",
+    "watch:js": "webpack --config webpack.config.cjs --mode development --watch",
+    "watch:css": "sass --watch --style=expanded --no-source-map scss/layer_search_filter.scss layer_search_filter.css",
+    "lint": "eslint --config .eslintrc.cjs src tests webpack.config.cjs",
+    "test": "node tests/run.js",
+    "check": "npm run lint && npm test && npm run build"
+  },
+  "devDependencies": {
+    "eslint": "8.57.0",
+    "eslint-config-airbnb-base": "15.0.0",
+    "eslint-plugin-import": "2.29.1",
+    "jsdom": "26.1.0",
+    "sass-embedded": "1.87.0",
+    "webpack": "5.105.0",
+    "webpack-cli": "6.0.1"
+  }
+}
