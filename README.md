@@ -1,6 +1,6 @@
-# layer_search_filter
+# layer-search-filter-plugin
 
-`layer_search_filter` adds layer-specific search and filter actions to the
+`layer-search-filter-plugin` adds layer-specific search and filter actions to the
 legend property panel. It can search remote layers through WFS, search loaded
 features in local vector-like layers, and search the enabled descendants of an
 Origo group layer.
