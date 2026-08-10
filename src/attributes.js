@@ -40,7 +40,11 @@ export default function createAttributeService({
   }
 
   function getAttributeDisplayName(attribute) {
-    return getAttributeTitle(attribute) || (attribute && attribute.name ? attribute.name : '');
+    const plainTextTitle = getAttributeTitle(attribute)
+      .replace(/<[^>]*>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+    return plainTextTitle || (attribute && attribute.name ? attribute.name : '');
   }
 
   function getAttributeByName(attributes, attributeName) {

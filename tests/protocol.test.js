@@ -40,6 +40,27 @@ test('normalizes configured attributes and preserves discovered type metadata', 
   assert.match(attributes.getAttributeCacheKey(layer, configured), /^layer:places:/);
 });
 
+test('uses normalized plain text for attribute display names without changing metadata', () => {
+  const attributes = createAttributeService({
+    attributeDisplayCollator: new Intl.Collator('sv', { sensitivity: 'base' }),
+    getTypeName: layer => layer.get('name'),
+    searchableAttributesMode: 'layer'
+  });
+  const titledAttribute = {
+    name: 'information',
+    title: '<br>  Information <strong>-</strong>  '
+  };
+
+  assert.equal(attributes.getAttributeTitle(titledAttribute), titledAttribute.title.trim());
+  assert.equal(attributes.getAttributeDisplayName(titledAttribute), 'Information -');
+  assert.equal(
+    attributes.getAttributeDisplayName({ name: 'period', title: 'First<br><em>Second</em>' }),
+    'First Second'
+  );
+  assert.equal(attributes.getAttributeDisplayName({ name: 'fallback', title: '<br><em> </em>' }), 'fallback');
+  assert.equal(attributes.getAttributeDisplayName({ name: 'entity', title: 'A &amp; B' }), 'A &amp; B');
+});
+
 test('constructs characterized WFS requests and recognizes query-length failures', () => {
   const previousWindow = globalThis.window;
   globalThis.window = { location: { href: 'https://viewer.example/map/' } };

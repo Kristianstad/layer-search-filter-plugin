@@ -262,7 +262,7 @@ this repository. It does not declare an independent Origo version range.
 | `activateLayerOnSuggestionClick` | `true` | If `true`, clicking a result suggestion makes the target layer and containing group visible before zooming or opening feature info. Set to `false` to keep hidden layers hidden while still zooming/highlighting the clicked feature. |
 | `includeExistingCqlFilter` | `true` | If `true`, existing layer/source filters are combined with the generated CQL filter or QGIS expression using `AND`. The option name is kept for backwards compatibility. |
 | `filterType` | autodetect | Default filter dialect for layers and sources that do not set their own `filterType`. Use `"cql"` for GeoServer CQL or `"qgis"` for QGIS Server `EXP_FILTER`. Omit the option to auto-detect the dialect. |
-| `searchableAttributes` | `"all"` | Which attributes can be searched and shown as attribute chips. Use `"all"` for all operator-compatible discovered attributes, or `"layer"` to use only layer `attributes` entries with a `name` confirmed by WFS/local discovery. `"configured"` is a legacy alias for `"layer"`. Attribute chips use `title` when present, fall back to `name`, and are sorted A-Ö. If the layer has no configured attributes, `"layer"` falls back to `"all"`. |
+| `searchableAttributes` | `"all"` | Which attributes can be searched and shown as attribute chips. Use `"all"` for all operator-compatible discovered attributes, or `"layer"` to use only layer `attributes` entries with a `name` confirmed by WFS/local discovery. `"configured"` is a legacy alias for `"layer"`. Attribute chips use the plain-text content of `title` when present, replace HTML tags with spaces, collapse repeated whitespace, fall back to `name`, and are sorted A-Ö. If the layer has no configured attributes, `"layer"` falls back to `"all"`. |
 | `useCurrentExtent` | `false` | If `true`, the current map extent is sent as a WFS `BBOX` parameter. It has no effect on local searches. |
 | `maxRequestQueryLength` | `1800` | Maximum request query string length before WFS searches are split into shorter `GetFeature` requests or long WMS filters switch to POST image loading. |
 | `maxZoomLevel` | map resolution count minus 2 | Maximum zoom level used when zooming to search results or opening feature info. |
@@ -464,9 +464,11 @@ Set `searchableAttributes` to `"layer"` to restrict the search UI and generated 
 
 With `"layer"`, `name` and `address` are used only if discovery exposes those
 properties. Attribute chips show `Namn` and `Adress`, sorted A-Ö by display
-text. For attributes without `title`, the chip uses `name`. Missing configured
-attributes are skipped. If a layer has no configured `attributes` entries with
-`name`, the plugin falls back to all discovered attributes.
+text. HTML tags in `title` are replaced with spaces and repeated whitespace is
+collapsed before display. For attributes without a usable `title`, the chip
+uses `name`. Missing configured attributes are skipped. If a layer has no
+configured `attributes` entries with `name`, the plugin falls back to all
+discovered attributes.
 
 ### Existing filters
 
