@@ -8,4 +8,5 @@ import './search-filter.test.js';
 import './search-panel-view.test.js';
 import './search-results.test.js';
 import './search-execution.test.js';
+import './suggestions-panel.test.js';
 import './webpack-config.test.js';

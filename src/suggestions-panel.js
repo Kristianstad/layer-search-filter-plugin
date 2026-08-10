@@ -5,6 +5,114 @@ import {
   normalizeSearchOperator
 } from './search-operators.js';
 
+const ALLOWED_RESULT_HTML_ELEMENTS = new Set([
+  'abbr',
+  'b',
+  'br',
+  'cite',
+  'code',
+  'em',
+  'i',
+  'mark',
+  'q',
+  's',
+  'small',
+  'strong',
+  'sub',
+  'sup',
+  'u'
+]);
+const BLOCKED_RESULT_HTML_ELEMENTS = new Set([
+  'base',
+  'button',
+  'embed',
+  'form',
+  'iframe',
+  'input',
+  'link',
+  'math',
+  'meta',
+  'object',
+  'option',
+  'script',
+  'select',
+  'style',
+  'svg',
+  'textarea'
+]);
+
+function unwrapElement(element) {
+  const { parentNode } = element;
+  while (element.firstChild) parentNode.insertBefore(element.firstChild, element);
+  parentNode.removeChild(element);
+}
+
+function sanitizeResultHtml(parent) {
+  Array.from(parent.childNodes).forEach((node) => {
+    if (node.nodeType === 3) return;
+    if (node.nodeType !== 1) {
+      node.remove();
+      return;
+    }
+
+    const tagName = node.tagName.toLowerCase();
+    if (BLOCKED_RESULT_HTML_ELEMENTS.has(tagName)) {
+      node.remove();
+      return;
+    }
+
+    sanitizeResultHtml(node);
+    if (!ALLOWED_RESULT_HTML_ELEMENTS.has(tagName)) {
+      unwrapElement(node);
+      return;
+    }
+
+    Array.from(node.attributes).forEach(attribute => node.removeAttribute(attribute.name));
+  });
+}
+
+function getTextNodeEntries(parent) {
+  const entries = [];
+  let offset = 0;
+
+  function visit(node) {
+    if (node.nodeType === 3) {
+      const length = node.data.length;
+      entries.push({ length, node, offset });
+      offset += length;
+      return;
+    }
+    Array.from(node.childNodes).forEach(visit);
+  }
+
+  visit(parent);
+  return entries;
+}
+
+function emphasizeTextRange(fragment, start, length) {
+  const end = start + length;
+  getTextNodeEntries(fragment).forEach((entry) => {
+    const entryEnd = entry.offset + entry.length;
+    const selectionStart = Math.max(start, entry.offset);
+    const selectionEnd = Math.min(end, entryEnd);
+    if (selectionStart >= selectionEnd) return;
+
+    const localStart = selectionStart - entry.offset;
+    const selectionLength = selectionEnd - selectionStart;
+    const matchedNode = localStart > 0 ? entry.node.splitText(localStart) : entry.node;
+    if (selectionLength < matchedNode.data.length) matchedNode.splitText(selectionLength);
+    const strong = document.createElement('strong');
+    matchedNode.parentNode.replaceChild(strong, matchedNode);
+    strong.appendChild(matchedNode);
+  });
+}
+
+function emphasizeAll(fragment) {
+  const strong = document.createElement('strong');
+  strong.append(...Array.from(fragment.childNodes));
+  fragment.appendChild(strong);
+}
+
 export default function createSuggestionsPanel({
   layerContext,
   localize,
@@ -28,16 +136,6 @@ export default function createSuggestionsPanel({
   let suggestionsListEl;
   let suggestionsResultCount;
   let activeSearchInputEl;
-
-  function escapeHtml(value) {
-    if (value === null || value === undefined) return '';
-    return String(value)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
-  }
 
   function getMatchedAttribute(
     jsonFeature,
@@ -79,17 +177,24 @@ export default function createSuggestionsPanel({
     matchMode = defaultTextMatchMode,
     searchOperatorValue = getSearchOperatorFromModes(defaultSearchMode, matchMode, defaultNumericComparisonMode)
   ) {
-    const value = String(matchedAttribute.value);
+    const parser = new document.defaultView.DOMParser();
+    const parsedDocument = parser.parseFromString(String(matchedAttribute.value), 'text/html');
+    sanitizeResultHtml(parsedDocument.body);
+    const fragment = document.createDocumentFragment();
+    Array.from(parsedDocument.body.childNodes).forEach((node) => {
+      fragment.appendChild(document.importNode(node, true));
+    });
+
+    const value = fragment.textContent;
     const normalizedSearchText = String(searchText).trim();
     const normalizedSearchOperator = normalizeSearchOperator(searchOperatorValue, defaultSearchMode, matchMode, defaultNumericComparisonMode);
 
-    if (!normalizedSearchText) return escapeHtml(value);
+    if (!normalizedSearchText) return fragment;
 
     if (matchedAttribute.type === 'string' || matchedAttribute.type === 'unknown') {
       if (isEqualsSearchOperator(normalizedSearchOperator)) {
-        return value === normalizedSearchText
-          ? `<strong>${escapeHtml(value)}</strong>`
-          : escapeHtml(value);
+        if (value === normalizedSearchText) emphasizeAll(fragment);
+        return fragment;
       }
       const valueLower = value.toLowerCase();
       const searchLower = normalizedSearchText.toLowerCase();
@@ -98,14 +203,13 @@ export default function createSuggestionsPanel({
         matchIndex = valueLower.startsWith(searchLower) ? 0 : -1;
       }
       if (matchIndex > -1) {
-        const before = value.substring(0, matchIndex);
-        const match = value.substring(matchIndex, matchIndex + normalizedSearchText.length);
-        const after = value.substring(matchIndex + normalizedSearchText.length);
-        return `${escapeHtml(before)}<strong>${escapeHtml(match)}</strong>${escapeHtml(after)}`;
+        emphasizeTextRange(fragment, matchIndex, normalizedSearchText.length);
+        return fragment;
       }
     }
 
-    return `<strong>${escapeHtml(value)}</strong>`;
+    emphasizeAll(fragment);
+    return fragment;
   }
 
   function getContainingGroupLayer(layer) {
@@ -314,12 +418,16 @@ export default function createSuggestionsPanel({
         : matchedAttributeDisplayName;
       button.type = 'button';
       button.className = 'o-layer_search_filter__result-button';
-      button.innerHTML = `
-        <span class="suggestion o-layer_search_filter__result-content">
-          <span class="o-layer_search_filter__result-title">${highlightMatchedValue(matchedAttribute, searchText, matchMode, searchOperatorValue)}</span>
-          <span class="o-layer_search_filter__result-description">${escapeHtml(resultDescription)}</span>
-        </span>
-      `;
+      const resultContentEl = document.createElement('span');
+      const resultTitleEl = document.createElement('span');
+      const resultDescriptionEl = document.createElement('span');
+      resultContentEl.className = 'suggestion o-layer_search_filter__result-content';
+      resultTitleEl.className = 'o-layer_search_filter__result-title';
+      resultDescriptionEl.className = 'o-layer_search_filter__result-description';
+      resultTitleEl.appendChild(highlightMatchedValue(matchedAttribute, searchText, matchMode, searchOperatorValue));
+      resultDescriptionEl.textContent = resultDescription;
+      resultContentEl.append(resultTitleEl, resultDescriptionEl);
+      button.appendChild(resultContentEl);
       button.addEventListener('click', () => {
         hide({ clearResults: false });
         showFeature(resultLayer, feature);
