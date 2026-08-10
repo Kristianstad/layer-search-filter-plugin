@@ -779,7 +779,7 @@ function createAttributeDiscovery({
   mergeAttributes,
   name,
   requestJson,
-  searchableAttributesMode
+  usesConfiguredAttributesOnly
 }) {
   async function discoverAttributesFromSample(layer) {
     const url = createWfsUrl(layer, {
@@ -895,10 +895,15 @@ function createAttributeDiscovery({
     }
 
     const configuredAttributes = getConfiguredAttributes(layer);
-    const useConfiguredAttributesOnly = searchableAttributesMode === 'layer' && configuredAttributes.length > 0;
-    const cacheKey = getAttributeCacheKey(layer, configuredAttributes);
+    const useConfiguredAttributesOnly = usesConfiguredAttributesOnly(layer, configuredAttributes);
+    const cacheKey = getAttributeCacheKey(layer, configuredAttributes, useConfiguredAttributesOnly);
     if (attributeCache[cacheKey]) return attributeCache[cacheKey];
     if (attributeRequestCache[cacheKey]) return attributeRequestCache[cacheKey];
+
+    if (useConfiguredAttributesOnly && configuredAttributes.length === 0) {
+      attributeCache[cacheKey] = [];
+      return attributeCache[cacheKey];
+    }
 
     const cacheGeneration = getPluginGeneration();
     const attributeRequest = (async () => {
@@ -1069,8 +1074,15 @@ function createAttributeService({
     ].map(value => encodeURIComponent(value)).join(':');
   }
 
+  function hasLayerSearchAttributes(layer) {
+    return Array.isArray(layer.get('layerSearchAttributes'));
+  }
+
   function getConfiguredAttributes(layer) {
-    const attributes = Array.isArray(layer.get('attributes')) ? layer.get('attributes') : [];
+    const layerAttributes = hasLayerSearchAttributes(layer)
+      ? layer.get('layerSearchAttributes')
+      : layer.get('attributes');
+    const attributes = Array.isArray(layerAttributes) ? layerAttributes : [];
     return attributes
       .filter(attribute => attribute && attribute.name)
       .map((attribute) => {
@@ -1085,9 +1097,18 @@ function createAttributeService({
       .filter(attribute => isSearchableAttribute(attribute, layer));
   }
 
-  function getAttributeCacheKey(layer, configuredAttributes) {
+  function usesConfiguredAttributesOnly(layer, configuredAttributes) {
+    return hasLayerSearchAttributes(layer)
+      || (searchableAttributesMode === 'layer' && configuredAttributes.length > 0);
+  }
+
+  function getAttributeCacheKey(
+    layer,
+    configuredAttributes,
+    configuredAttributesOnly = usesConfiguredAttributesOnly(layer, configuredAttributes)
+  ) {
     const configuredAttributesKey = configuredAttributes.map(getConfiguredAttributeCachePart).join('|');
-    if (searchableAttributesMode !== 'layer' || configuredAttributes.length === 0) {
+    if (!configuredAttributesOnly) {
       return configuredAttributesKey
         ? `all:${getTypeName(layer)}:${configuredAttributesKey}`
         : `all:${getTypeName(layer)}`;
@@ -1177,8 +1198,10 @@ function createAttributeService({
     getValueType,
     hasMissingConfiguredAttributes,
     hasUnknownAttributeTypes,
+    hasLayerSearchAttributes,
     isSearchableAttribute,
-    mergeAttributes
+    mergeAttributes,
+    usesConfiguredAttributesOnly
   };
 }
 
@@ -3958,7 +3981,7 @@ function createPluginServices({
     mergeAttributes: attributeService.mergeAttributes,
     name,
     requestJson: wfsClient.requestJson,
-    searchableAttributesMode
+    usesConfiguredAttributesOnly: attributeService.usesConfiguredAttributesOnly
   });
 
   const searchFilterRules = createSearchFilter({

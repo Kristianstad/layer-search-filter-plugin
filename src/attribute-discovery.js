@@ -23,7 +23,7 @@ export default function createAttributeDiscovery({
   mergeAttributes,
   name,
   requestJson,
-  searchableAttributesMode
+  usesConfiguredAttributesOnly
 }) {
   async function discoverAttributesFromSample(layer) {
     const url = createWfsUrl(layer, {
@@ -139,10 +139,15 @@ export default function createAttributeDiscovery({
     }
 
     const configuredAttributes = getConfiguredAttributes(layer);
-    const useConfiguredAttributesOnly = searchableAttributesMode === 'layer' && configuredAttributes.length > 0;
-    const cacheKey = getAttributeCacheKey(layer, configuredAttributes);
+    const useConfiguredAttributesOnly = usesConfiguredAttributesOnly(layer, configuredAttributes);
+    const cacheKey = getAttributeCacheKey(layer, configuredAttributes, useConfiguredAttributesOnly);
     if (attributeCache[cacheKey]) return attributeCache[cacheKey];
     if (attributeRequestCache[cacheKey]) return attributeRequestCache[cacheKey];
+
+    if (useConfiguredAttributesOnly && configuredAttributes.length === 0) {
+      attributeCache[cacheKey] = [];
+      return attributeCache[cacheKey];
+    }
 
     const cacheGeneration = getPluginGeneration();
     const attributeRequest = (async () => {

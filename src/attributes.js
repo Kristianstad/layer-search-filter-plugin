@@ -80,8 +80,15 @@ export default function createAttributeService({
     ].map(value => encodeURIComponent(value)).join(':');
   }
 
+  function hasLayerSearchAttributes(layer) {
+    return Array.isArray(layer.get('layerSearchAttributes'));
+  }
+
   function getConfiguredAttributes(layer) {
-    const attributes = Array.isArray(layer.get('attributes')) ? layer.get('attributes') : [];
+    const layerAttributes = hasLayerSearchAttributes(layer)
+      ? layer.get('layerSearchAttributes')
+      : layer.get('attributes');
+    const attributes = Array.isArray(layerAttributes) ? layerAttributes : [];
     return attributes
       .filter(attribute => attribute && attribute.name)
       .map((attribute) => {
@@ -96,9 +103,18 @@ export default function createAttributeService({
       .filter(attribute => isSearchableAttribute(attribute, layer));
   }
 
-  function getAttributeCacheKey(layer, configuredAttributes) {
+  function usesConfiguredAttributesOnly(layer, configuredAttributes) {
+    return hasLayerSearchAttributes(layer)
+      || (searchableAttributesMode === 'layer' && configuredAttributes.length > 0);
+  }
+
+  function getAttributeCacheKey(
+    layer,
+    configuredAttributes,
+    configuredAttributesOnly = usesConfiguredAttributesOnly(layer, configuredAttributes)
+  ) {
     const configuredAttributesKey = configuredAttributes.map(getConfiguredAttributeCachePart).join('|');
-    if (searchableAttributesMode !== 'layer' || configuredAttributes.length === 0) {
+    if (!configuredAttributesOnly) {
       return configuredAttributesKey
         ? `all:${getTypeName(layer)}:${configuredAttributesKey}`
         : `all:${getTypeName(layer)}`;
@@ -188,7 +204,9 @@ export default function createAttributeService({
     getValueType,
     hasMissingConfiguredAttributes,
     hasUnknownAttributeTypes,
+    hasLayerSearchAttributes,
     isSearchableAttribute,
-    mergeAttributes
+    mergeAttributes,
+    usesConfiguredAttributesOnly
   };
 }

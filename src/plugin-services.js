@@ -111,7 +111,7 @@ export default function createPluginServices({
     mergeAttributes: attributeService.mergeAttributes,
     name,
     requestJson: wfsClient.requestJson,
-    searchableAttributesMode
+    usesConfiguredAttributesOnly: attributeService.usesConfiguredAttributesOnly
   });
 
   const searchFilterRules = createSearchFilterRules({
