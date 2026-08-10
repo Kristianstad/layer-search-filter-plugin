@@ -4255,7 +4255,7 @@ function createSearchPanelView({
         </button>
       </div>
       <div class="o-layer_search_filter__between-control hidden">
-        <input class="o-layer_search_filter__between-input form-control text-grey-darker" type="text" autocomplete="off" placeholder="${escapeHtml(localize('numericComparisonBetweenEndPlaceholder', options.numericComparisonBetweenEndPlaceholder))}" aria-label="${escapeHtml(localize('numericComparisonBetweenEndPlaceholder', options.numericComparisonBetweenEndPlaceholder))}" />
+        <input class="o-layer_search_filter__between-input text-grey-darker" type="text" autocomplete="off" placeholder="${escapeHtml(localize('numericComparisonBetweenEndPlaceholder', options.numericComparisonBetweenEndPlaceholder))}" aria-label="${escapeHtml(localize('numericComparisonBetweenEndPlaceholder', options.numericComparisonBetweenEndPlaceholder))}" />
       </div>
     </form>
     <div class="o-layer_search_filter__actions hidden" role="toolbar" aria-label="${escapeHtml(localize('filterActionsTitle', options.filterActionsTitle))}">
