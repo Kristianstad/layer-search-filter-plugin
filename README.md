@@ -322,6 +322,10 @@ The plugin sends WFS requests to the resolved URL and sets parameters such as:
 - `EXP_FILTER=<generated QGIS expression>` for QGIS Server,
 - `BBOX=<extent>,<projection>` when `useCurrentExtent` is enabled.
 
+Generated CQL filters double-quote every attribute name and escape embedded
+double quotes. This keeps ordinary property names working while also supporting
+GeoServer/ECQL reserved names such as `id`.
+
 Entries in the source configuration's `queryParams` object are copied to every
 WFS URL. Use this for stable service parameters such as a public token; do not
 put secrets in browser configuration.
@@ -519,12 +523,12 @@ The round filter button preserves the layer's original filter state separately. 
 The operator dropdown is shown after the layer action buttons and only includes choices that match the layer's searchable attribute types.
 
 - `Innehåller` searches text attributes case-insensitively with
-  `field ILIKE '%abc%'` for CQL, or the equivalent QGIS expression.
+  `"field" ILIKE '%abc%'` for CQL, or the equivalent QGIS expression.
 - `Börjar med` searches text attributes case-insensitively from the beginning
-  with `field ILIKE 'abc%'` for CQL, or the equivalent QGIS expression.
-- `Lika med` searches strings exactly and case-sensitively with `text_field = 'abc'`, and numbers with `number_field = 42`. A numeric value searches both field types when both are active.
+  with `"field" ILIKE 'abc%'` for CQL, or the equivalent QGIS expression.
+- `Lika med` searches strings exactly and case-sensitively with `"text_field" = 'abc'`, and numbers with `"number_field" = 42`. A numeric value searches both field types when both are active.
 - `Större än` and `Mindre än` search numeric attributes with greater-than or less-than comparisons.
-- `Mellan` searches numeric attributes inclusively with `field BETWEEN 10 AND 20` and shows a second value field.
+- `Mellan` searches numeric attributes inclusively with `"field" BETWEEN 10 AND 20` and shows a second value field.
 
 Attribute chips follow the selected operator. Text operators show text-like properties, numeric-only operators show numeric properties, and `Lika med` shows both. Suggestion rows show the same layer attribute `title` below the matched value when a title is configured.
 

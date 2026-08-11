@@ -45,7 +45,6 @@ export default function createSearchFilter({
   }
 
   function formatAttributeName(attributeName) {
-    if (/^[A-Za-z_][A-Za-z0-9_:.]*$/.test(attributeName)) return attributeName;
     return `"${String(attributeName).replace(/"/g, '""')}"`;
   }
 

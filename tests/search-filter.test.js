@@ -56,8 +56,20 @@ test('builds the characterized CQL and QGIS filter dialects', () => {
   const numericAttributes = [{ name: 'amount', type: 'number' }];
 
   assert.equal(
+    rules.buildSearchCql([{ name: 'id', type: 'string' }], 'st'),
+    '("id" ILIKE \'%st%\')'
+  );
+  assert.equal(
+    rules.buildSearchCql([{ name: 'name', type: 'string' }], 'Al'),
+    '("name" ILIKE \'%Al%\')'
+  );
+  assert.equal(
     rules.buildSearchCql(stringAttributes, "O'Brien"),
     "(\"display name\" ILIKE '%O''Brien%')"
+  );
+  assert.equal(
+    rules.buildSearchCql([{ name: 'owner"name', type: 'string' }], 'Al'),
+    '("owner""name" ILIKE \'%Al%\')'
   );
   assert.equal(
     rules.buildSearchQgisExpression(stringAttributes, 'Al', true, 'startsWith'),
@@ -65,7 +77,7 @@ test('builds the characterized CQL and QGIS filter dialects', () => {
   );
   assert.equal(
     rules.buildSearchCql(numericAttributes, '10', true, 'contains', 'between', 'numeric', '2', 'between'),
-    '(amount BETWEEN 2 AND 10)'
+    '("amount" BETWEEN 2 AND 10)'
   );
 });
 
