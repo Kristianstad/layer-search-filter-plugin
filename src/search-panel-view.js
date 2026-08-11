@@ -45,8 +45,19 @@ export default function createSearchPanelView({
     ? ''
     : String(localizedButtonText).trim();
   const activationButtonClass = `o-layer_search_filter__activate-button${activationButtonLabel ? '' : ' o-layer_search_filter__activate-button--icon-only'}`;
-  const activationButtonAriaLabel = activationButtonLabel || localize('title', options.title) || 'Sök';
-  const activationButtonTextHtml = activationButtonLabel ? `<span>${escapeHtml(activationButtonLabel)}</span>` : '';
+  const activationButtonTooltip = activationButtonLabel
+    ? ''
+    : localize('placeholder', options.placeholder) || 'Sök i detta lager';
+  const activationButtonAriaLabel = activationButtonLabel
+    || activationButtonTooltip
+    || localize('title', options.title)
+    || 'Sök';
+  const activationButtonTitleHtml = activationButtonTooltip
+    ? ` title="${escapeHtml(activationButtonTooltip)}"`
+    : '';
+  const activationButtonTextHtml = activationButtonLabel
+    ? `<span class="o-layer_search_filter__activate-button-text">${escapeHtml(activationButtonLabel)}</span>`
+    : '';
   const hasLayerVisibilityButton = options.showLayerVisibilityButton !== false;
   const hasFilterButton = options.showFilterButton !== false;
   const hasZoomToResultsButton = options.showZoomToResultsButton !== false;
@@ -97,9 +108,9 @@ export default function createSearchPanelView({
   const wrapper = document.createElement('div');
   wrapper.className = 'o-layer_search_filter padding-small padding-x text-small';
   wrapper.innerHTML = `
-    <button class="${activationButtonClass}" type="button" aria-expanded="false" aria-label="${escapeHtml(activationButtonAriaLabel)}">
-      <span class="icon grey"><svg class="grey"><use xlink:href="#ic_search_24px"></use></svg></span>
+    <button class="${activationButtonClass}" type="button" aria-expanded="false" aria-label="${escapeHtml(activationButtonAriaLabel)}"${activationButtonTitleHtml}>
       ${activationButtonTextHtml}
+      <span class="icon grey"><svg class="grey"><use xlink:href="#ic_search_24px"></use></svg></span>
     </button>
     <form class="o-layer_search_filter__form hidden" aria-label="${escapeHtml(localize('title', options.title))}">
       <div class="o-layer_search_filter__control o-search o-search-false flex row align-center padding-right-small">

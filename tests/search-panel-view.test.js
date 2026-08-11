@@ -20,6 +20,7 @@ function createLayer({ children, queryable, type = 'WFS' } = {}) {
 function createOptions(overrides = {}) {
   return {
     buttonText: 'Search',
+    placeholder: 'Search this layer',
     showCloseSearchButton: false,
     showFeatureInfoForResultsButton: true,
     showFilterButton: false,
@@ -29,6 +30,81 @@ function createOptions(overrides = {}) {
     ...overrides
   };
 }
+
+test('renders the activation button label before a trailing icon', () => {
+  const dom = new JSDOM('<!doctype html><html><body><div id="with-text"></div></body></html>', {
+    url: 'https://example.test/map/'
+  });
+  globalThis.window = dom.window;
+  globalThis.document = dom.window.document;
+
+  try {
+    const view = createSearchPanelView({
+      cmp: { getId: () => 'with-text' },
+      layer: createLayer(),
+      layerContext: {
+        getLayerVisibilityIcon: () => '#ic_visibility_24px',
+        getLayerVisibilityLabel: () => 'Hide layer',
+        hasQueryableSearchTarget: () => false
+      },
+      localize: (_key, fallback) => fallback,
+      options: createOptions()
+    });
+    const { activateButtonEl } = view.elements;
+
+    assert.equal(activateButtonEl.classList.contains('o-layer_search_filter__activate-button--icon-only'), false);
+    assert.equal(activateButtonEl.getAttribute('aria-label'), 'Search');
+    assert.equal(activateButtonEl.hasAttribute('title'), false);
+    assert.equal(activateButtonEl.children.length, 2);
+    assert.equal(activateButtonEl.children[0].classList.contains('o-layer_search_filter__activate-button-text'), true);
+    assert.equal(activateButtonEl.children[0].textContent, 'Search');
+    assert.equal(activateButtonEl.children[1].classList.contains('icon'), true);
+  } finally {
+    dom.window.close();
+    delete globalThis.window;
+    delete globalThis.document;
+  }
+});
+
+test('renders empty and whitespace activation labels as icon-only buttons', () => {
+  const dom = new JSDOM('<!doctype html><html><body></body></html>', {
+    url: 'https://example.test/map/'
+  });
+  globalThis.window = dom.window;
+  globalThis.document = dom.window.document;
+
+  try {
+    ['', '   '].forEach((buttonText, index) => {
+      const id = `icon-only-${index}`;
+      const targetEl = document.createElement('div');
+      targetEl.id = id;
+      document.body.appendChild(targetEl);
+      const view = createSearchPanelView({
+        cmp: { getId: () => id },
+        layer: createLayer(),
+        layerContext: {
+          getLayerVisibilityIcon: () => '#ic_visibility_24px',
+          getLayerVisibilityLabel: () => 'Hide layer',
+          hasQueryableSearchTarget: () => false
+        },
+        localize: (_key, fallback) => fallback,
+        options: createOptions({ buttonText })
+      });
+      const { activateButtonEl } = view.elements;
+
+      assert.equal(activateButtonEl.classList.contains('o-layer_search_filter__activate-button--icon-only'), true);
+      assert.equal(activateButtonEl.getAttribute('aria-label'), 'Search this layer');
+      assert.equal(activateButtonEl.getAttribute('title'), 'Search this layer');
+      assert.equal(activateButtonEl.querySelector('.o-layer_search_filter__activate-button-text'), null);
+      assert.equal(activateButtonEl.children.length, 1);
+      assert.equal(activateButtonEl.children[0].classList.contains('icon'), true);
+    });
+  } finally {
+    dom.window.close();
+    delete globalThis.window;
+    delete globalThis.document;
+  }
+});
 
 function createSearchActivationHarness({ discoverAttributes }) {
   const attributesEl = document.createElement('div');

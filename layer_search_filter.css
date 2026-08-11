@@ -47,6 +47,7 @@
 
 .o-layer_search_filter__activate-button {
   align-items: center;
+  align-self: flex-end;
   background: #fff;
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 9999px;
@@ -54,11 +55,15 @@
   cursor: pointer;
   display: flex;
   font-family: inherit;
-  font-size: 1rem;
+  font-size: 0.875rem;
   gap: 0.35rem;
-  min-height: 2.5rem;
-  padding: 0 0.75rem;
-  width: 100%;
+  height: 2rem;
+  justify-content: flex-end;
+  max-height: 2rem;
+  max-width: 100%;
+  min-height: 2rem;
+  padding: 0 0.375rem 0 0.75rem;
+  width: auto;
 }
 
 .o-layer_search_filter__activate-button--icon-only {
@@ -97,15 +102,23 @@
   align-items: center;
   display: flex;
   flex: 0 0 auto;
-  height: 1.5rem;
+  height: 1.25rem;
   justify-content: center;
-  width: 1.5rem;
+  width: 1.25rem;
 }
 
 .o-layer_search_filter__activate-button svg {
   fill: #777;
-  height: 1.5rem;
-  width: 1.5rem;
+  height: 1.25rem;
+  width: 1.25rem;
+}
+
+.o-layer_search_filter__activate-button-text {
+  min-width: 0;
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .o-layer_search_filter__activate-button--icon-only .icon,
