@@ -202,6 +202,7 @@ export default function createSearchPanel({
     operatorMenu.close();
     suggestions.hide();
     suggestions.clearActiveInput(elements.inputEl);
+    view.targetEl.classList.remove('o-layer_search_filter__host--expanded');
     elements.activateButtonEl.classList.remove('hidden');
     elements.activateButtonEl.setAttribute('aria-expanded', 'false');
     elements.formEl.classList.add('hidden');
@@ -219,6 +220,7 @@ export default function createSearchPanel({
       return;
     }
     state.disposed = true;
+    view.targetEl.classList.remove('o-layer_search_filter__host--expanded');
     elements.footerEl.remove();
     if (view.footerScrollContainerEl) {
       view.footerScrollContainerEl.classList.remove('o-layer_search_filter__scroll-container--docked-footer');

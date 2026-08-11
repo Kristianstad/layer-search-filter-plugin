@@ -71,7 +71,10 @@ test('registers with Origo, renders the layer UI, and releases lifecycle listene
     setTimeout(resolve, 10);
   });
 
-  assert.ok(document.querySelector('.o-layer_search_filter'));
+  const searchPanel = document.querySelector('.o-layer_search_filter');
+  assert.ok(searchPanel);
+  assert.equal(panel.getId(), 'layer-panel');
+  assert.equal(document.getElementById(panel.getId()).classList.contains('o-layer_search_filter__host--expanded'), false);
   const activateButton = document.querySelector('.o-layer_search_filter__activate-button');
   assert.ok(activateButton);
   assert.equal(layer.listenerCount('change:visible'), 1);
@@ -82,8 +85,18 @@ test('registers with Origo, renders the layer UI, and releases lifecycle listene
   });
   assert.equal(document.querySelector('.o-layer_search_filter__form').classList.contains('hidden'), false);
   assert.equal(activateButton.getAttribute('aria-expanded'), 'true');
+  assert.equal(document.getElementById(panel.getId()).classList.contains('o-layer_search_filter__host--expanded'), true);
+
+  const closeButton = document.querySelector('.o-layer_search_filter__close-button');
+  closeButton.click();
+  assert.equal(document.getElementById(panel.getId()).classList.contains('o-layer_search_filter__host--expanded'), false);
+  assert.equal(activateButton.getAttribute('aria-expanded'), 'false');
+
+  activateButton.click();
+  assert.equal(document.getElementById(panel.getId()).classList.contains('o-layer_search_filter__host--expanded'), true);
 
   component.emit('clear');
+  assert.equal(document.getElementById(panel.getId()).classList.contains('o-layer_search_filter__host--expanded'), false);
   assert.equal(legend.listenerCount('renderOverlayProperties'), 0);
   assert.equal(map.listenerCount('click'), 0);
   assert.equal(layer.listenerCount('change:visible'), 0);

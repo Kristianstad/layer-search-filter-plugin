@@ -79,6 +79,7 @@ function createSearchActivationHarness({ discoverAttributes }) {
     },
     state,
     view: {
+      targetEl: document.createElement('div'),
       elements: {
         activateButtonEl: document.createElement('button'),
         attributesEl,

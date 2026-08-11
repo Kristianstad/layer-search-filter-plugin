@@ -26,6 +26,10 @@
   flex-direction: column;
 }
 
+.o-map .border-bottom.o-layer_search_filter__host--expanded {
+  border-bottom-color: transparent;
+}
+
 .o-layer_search_filter__form {
   margin: 0;
   width: 100%;
@@ -130,7 +134,7 @@
 }
 
 .o-layer_search_filter__footer--docked {
-  background: #fafafa;
+  background: #fff;
   border-bottom: 1px solid rgba(0, 0, 0, 0.18);
   box-sizing: border-box;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);

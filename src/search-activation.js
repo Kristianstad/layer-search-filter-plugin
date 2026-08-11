@@ -121,6 +121,7 @@ export default function createSearchActivation({
   function activate({ restore = false } = {}) {
     if (state.disposed || state.activationStarted) return;
     state.activationStarted = true;
+    view.targetEl.classList.add('o-layer_search_filter__host--expanded');
     view.elements.activateButtonEl.classList.add('hidden');
     view.elements.activateButtonEl.setAttribute('aria-expanded', 'true');
     view.elements.formEl.classList.remove('hidden');

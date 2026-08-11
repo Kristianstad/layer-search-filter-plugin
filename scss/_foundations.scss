@@ -26,6 +26,10 @@
   flex-direction: column;
 }
 
+.o-map .border-bottom.o-layer_search_filter__host--expanded {
+  border-bottom-color: transparent;
+}
+
 .o-layer_search_filter__form {
   margin: 0;
   width: 100%;

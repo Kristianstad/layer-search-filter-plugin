@@ -4444,6 +4444,7 @@ function createSearchActivation({
   function activate({ restore = false } = {}) {
     if (state.disposed || state.activationStarted) return;
     state.activationStarted = true;
+    view.targetEl.classList.add('o-layer_search_filter__host--expanded');
     view.elements.activateButtonEl.classList.add('hidden');
     view.elements.activateButtonEl.setAttribute('aria-expanded', 'true');
     view.elements.formEl.classList.remove('hidden');
@@ -5446,6 +5447,7 @@ function createSearchPanel({
     operatorMenu.close();
     suggestions.hide();
     suggestions.clearActiveInput(elements.inputEl);
+    view.targetEl.classList.remove('o-layer_search_filter__host--expanded');
     elements.activateButtonEl.classList.remove('hidden');
     elements.activateButtonEl.setAttribute('aria-expanded', 'false');
     elements.formEl.classList.add('hidden');
@@ -5463,6 +5465,7 @@ function createSearchPanel({
       return;
     }
     state.disposed = true;
+    view.targetEl.classList.remove('o-layer_search_filter__host--expanded');
     elements.footerEl.remove();
     if (view.footerScrollContainerEl) {
       view.footerScrollContainerEl.classList.remove('o-layer_search_filter__scroll-container--docked-footer');
