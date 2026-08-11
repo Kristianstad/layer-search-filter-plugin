@@ -30,6 +30,72 @@ function createOptions(overrides = {}) {
   };
 }
 
+function createSearchActivationHarness({ discoverAttributes }) {
+  const attributesEl = document.createElement('div');
+  const betweenInputEl = document.createElement('input');
+  const inputEl = document.createElement('input');
+  const statusEl = document.createElement('div');
+  statusEl.hidden = true;
+
+  const state = {
+    activationStarted: false,
+    currentSearchOperator: 'textIlike',
+    discoveredAttributes: [],
+    discoveryFailed: false,
+    disposed: false,
+    selectedAttributeNames: new Set()
+  };
+  const activation = createSearchActivation({
+    actions: {
+      persistUiState() {},
+      suggestions: { hide() {} },
+      updateActionsVisibility() {},
+      updateFooterVisibility() {}
+    },
+    layer: {},
+    localize: (_key, fallback) => fallback,
+    operatorMenu: {
+      setDisabled() {},
+      updateState() {}
+    },
+    options: {
+      attributeFilterTitle: 'Searchable attributes',
+      discoveringAttributesText: 'Reading attributes...',
+      name: 'layer_search_filter',
+      noAttributesText: 'No searchable attributes.'
+    },
+    searchExecution: {
+      hasCurrentSearchableInput: () => false,
+      invalidate() {},
+      schedule() {}
+    },
+    services: {
+      clearHighlightedFeatures() {},
+      discoverAttributes,
+      getAttributeDisplayName: attribute => attribute.name,
+      getSearchOperatorAttributes: attributes => attributes,
+      hasSearchableLayerData: () => true,
+      prewarmFilterDialects() {}
+    },
+    state,
+    view: {
+      elements: {
+        activateButtonEl: document.createElement('button'),
+        attributesEl,
+        betweenInputEl,
+        featureInfoForResultsButtonEl: null,
+        filterButtonEl: null,
+        formEl: document.createElement('div'),
+        inputEl,
+        statusEl,
+        zoomToResultsButtonEl: null
+      }
+    }
+  });
+
+  return { activation, attributesEl, statusEl };
+}
+
 test('only renders the feature info action for queryable search targets', () => {
   const dom = new JSDOM('<!doctype html><html><body></body></html>', {
     url: 'https://example.test/map/'
@@ -110,9 +176,16 @@ test('renders attribute chips as sorted plain text without HTML elements', () =>
       { name: 'zulu', title: '<br>Zulu', type: 'string' },
       { name: 'alpha', title: '<strong>Alpha</strong>', type: 'string' },
       { name: 'information', title: '<br>Information - ', type: 'string' },
-      { name: 'fallback', title: '<br><em> </em>', type: 'string' }
+      { name: 'fallback', title: '<br><em> </em>', type: 'string' },
+      { name: 'population', title: 'Population', type: 'number' },
+      { name: 'elevation', title: 'Elevation', type: 'number' }
     ];
     const attributesEl = document.createElement('div');
+    const state = {
+      currentSearchOperator: 'textIlike',
+      discoveredAttributes,
+      selectedAttributeNames: new Set()
+    };
     const activation = createSearchActivation({
       actions: {
         persistUiState() {},
@@ -129,13 +202,13 @@ test('renders attribute chips as sorted plain text without HTML elements', () =>
       services: {
         clearHighlightedFeatures() {},
         getAttributeDisplayName: attributes.getAttributeDisplayName,
-        getSearchOperatorAttributes: values => attributes.getSortedAttributes(values)
+        getSearchOperatorAttributes: (values, operator) => attributes.getSortedAttributes(
+          values.filter(attribute => (operator === 'numericEquals'
+            ? attribute.type === 'number'
+            : attribute.type !== 'number'))
+        )
       },
-      state: {
-        currentSearchOperator: 'textIlike',
-        discoveredAttributes,
-        selectedAttributeNames: new Set()
-      },
+      state,
       view: { elements: { attributesEl } }
     });
 
@@ -143,10 +216,65 @@ test('renders attribute chips as sorted plain text without HTML elements', () =>
 
     const buttons = Array.from(attributesEl.querySelectorAll('.o-layer_search_filter__attribute-button'));
     assert.deepEqual(buttons.map(button => button.textContent), ['Alpha', 'fallback', 'Information -', 'Zulu']);
+    assert.equal(attributesEl.querySelector('.o-layer_search_filter__attributes-title').textContent, 'Searchable attributes (4)');
+    assert.equal(attributesEl.querySelector('.o-layer_search_filter__attributes-list').getAttribute('aria-label'), 'Searchable attributes (4)');
     buttons.forEach((button) => {
       assert.equal(button.children.length, 0);
       assert.doesNotMatch(button.textContent, /<[^>]*>/);
     });
+
+    state.currentSearchOperator = 'numericEquals';
+    activation.renderAttributeButtons(discoveredAttributes);
+
+    const numericButtons = Array.from(attributesEl.querySelectorAll('.o-layer_search_filter__attribute-button'));
+    assert.deepEqual(numericButtons.map(button => button.textContent), ['Elevation', 'Population']);
+    assert.equal(attributesEl.querySelector('.o-layer_search_filter__attributes-title').textContent, 'Searchable attributes (2)');
+  } finally {
+    dom.window.close();
+    delete globalThis.window;
+    delete globalThis.document;
+  }
+});
+
+test('clears the discovery status when attributes are ready and preserves loading and error states', async () => {
+  const dom = new JSDOM('<!doctype html><html><body></body></html>', {
+    url: 'https://example.test/map/'
+  });
+  globalThis.window = dom.window;
+  globalThis.document = dom.window.document;
+
+  try {
+    const readyHarness = createSearchActivationHarness({
+      discoverAttributes: async () => [
+        { name: 'name', type: 'string' },
+        { name: 'population', type: 'number' },
+        { name: 'region', type: 'string' }
+      ]
+    });
+
+    readyHarness.activation.activate();
+    assert.equal(readyHarness.statusEl.textContent, 'Reading attributes...');
+    assert.equal(readyHarness.statusEl.hidden, false);
+
+    await Promise.resolve();
+
+    assert.equal(readyHarness.attributesEl.querySelector('.o-layer_search_filter__attributes-title').textContent, 'Searchable attributes (3)');
+    assert.equal(readyHarness.statusEl.textContent, '');
+    assert.equal(readyHarness.statusEl.hidden, true);
+
+    const errorHarness = createSearchActivationHarness({
+      discoverAttributes: async () => []
+    });
+
+    errorHarness.activation.activate();
+    assert.equal(errorHarness.statusEl.textContent, 'Reading attributes...');
+    assert.equal(errorHarness.statusEl.hidden, false);
+
+    await Promise.resolve();
+
+    assert.equal(errorHarness.statusEl.textContent, 'No searchable attributes.');
+    assert.equal(errorHarness.statusEl.classList.contains('error'), true);
+    assert.equal(errorHarness.statusEl.hidden, false);
   } finally {
     dom.window.close();
     delete globalThis.window;

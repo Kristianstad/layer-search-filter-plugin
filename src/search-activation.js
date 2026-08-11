@@ -67,12 +67,13 @@ export default function createSearchActivation({
 
     const titleEl = document.createElement('div');
     titleEl.className = 'o-layer_search_filter__attributes-title';
-    titleEl.replaceChildren(document.createTextNode(localize('attributeFilterTitle', options.attributeFilterTitle)));
+    const attributeFilterTitle = `${localize('attributeFilterTitle', options.attributeFilterTitle)} (${visibleAttributes.length})`;
+    titleEl.replaceChildren(document.createTextNode(attributeFilterTitle));
 
     const listEl = document.createElement('div');
     listEl.className = 'o-layer_search_filter__attributes-list';
     listEl.setAttribute('role', 'group');
-    listEl.setAttribute('aria-label', localize('attributeFilterTitle', options.attributeFilterTitle));
+    listEl.setAttribute('aria-label', attributeFilterTitle);
 
     visibleAttributes.forEach((attribute) => {
       const attributeButtonEl = document.createElement('button');
@@ -110,9 +111,7 @@ export default function createSearchActivation({
     }
     operatorMenu.updateState();
     renderAttributeButtons(attributes);
-    const message = localize('attributesReadyText', options.attributesReadyText)
-      .replace('{{count}}', attributes.length);
-    setPanelStatus(statusEl, message, 'success');
+    setPanelStatus(statusEl, '');
     setSearchControlsDisabled(false);
     actions.persistUiState();
     if (!restore) inputEl.focus();

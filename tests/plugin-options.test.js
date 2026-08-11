@@ -9,6 +9,7 @@ test('preserves plugin defaults and deprecated request-length aliases', () => {
   assert.equal(defaults.defaultSearchMode, 'text');
   assert.equal(defaults.defaultTextMatchMode, 'contains');
   assert.equal(defaults.attributeFilterTitle, 'Sökbara attribut');
+  assert.equal('attributesReadyText' in defaults, false);
   assert.equal(defaults.noResultsText, 'Inga träffar.');
   assert.equal(defaults.zoomToResultStatusText, '{{count}} träff markerad.');
   assert.equal(defaults.zoomToResultsStatusText, '{{count}} träffar markerade.');

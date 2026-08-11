@@ -208,10 +208,9 @@ this repository. It does not declare an independent Origo version range.
 | `suggestionsTitle` | `"Sökresultat"` | Title shown above the suggestion list. The number of currently displayed suggestions is appended in parentheses after each search. |
 | `placeholder` | `"Sök i detta lager"` | Placeholder text in the search input. |
 | `buttonText` | `""` | Text shown on the activation button. If empty, the button is icon-only. |
-| `attributeFilterTitle` | `"Sökbara attribut"` | Heading for the discovered attribute filter buttons. |
+| `attributeFilterTitle` | `"Sökbara attribut"` | Heading for the discovered attribute filter buttons. The number of currently visible attributes is appended in parentheses. |
 | `loadingText` | `"Söker..."` | Message shown while a search is running. |
 | `discoveringAttributesText` | `"Läser attribut..."` | Message shown while attributes are being discovered. |
-| `attributesReadyText` | `"{{count}} attribut hittade."` | Message shown after attributes have been discovered. `{{count}}` is replaced by the attribute count. |
 | `noAttributesText` | `"Kunde inte hitta några sökbara attribut för lagret."` | Message shown when no searchable attributes can be found. |
 | `noResultsText` | `"Inga träffar."` | Message shown when the search returns no results. |
 | `typeMoreText` | `"Skriv minst {{minLength}} tecken."` | Message shown when the search text is too short. `{{minLength}}` is replaced by the configured minimum length. |

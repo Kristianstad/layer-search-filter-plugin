@@ -78,7 +78,6 @@ export default function createPluginOptions(options = {}) {
     attributeFilterTitle = 'Sökbara attribut',
     loadingText = 'Söker...',
     discoveringAttributesText = 'Läser attribut...',
-    attributesReadyText = '{{count}} attribut hittade.',
     noAttributesText = 'Kunde inte hitta några sökbara attribut för lagret.',
     noResultsText = 'Inga träffar.',
     zoomToResultStatusText = '{{count}} träff markerad.',
@@ -163,7 +162,6 @@ export default function createPluginOptions(options = {}) {
   return {
     activateLayerOnSuggestionClick,
     attributeFilterTitle,
-    attributesReadyText,
     buttonText,
     closeSearchButtonTitle,
     debounceDelay,
