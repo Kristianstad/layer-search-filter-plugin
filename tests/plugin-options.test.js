@@ -1,7 +1,10 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import createPluginOptions, { createSearchOperatorOptions } from '../src/plugin-options.js';
+import createPluginOptions, {
+  createSearchOperatorOptions,
+  defaultHighlightStyleOptions
+} from '../src/plugin-options.js';
 
 test('preserves plugin defaults and deprecated request-length aliases', () => {
   const defaults = createPluginOptions();
@@ -21,8 +24,23 @@ test('preserves plugin defaults and deprecated request-length aliases', () => {
   );
   assert.equal(defaults.requestQueryLengthLimit, 1800);
   assert.equal(defaults.wmsOverlayFeatureLimit, 1000);
+  assert.deepEqual(defaults.highlightStyleOptions.Point, [{
+    circle: {
+      radius: 5,
+      stroke: {
+        color: [0, 153, 255, 1],
+        width: 0
+      },
+      fill: {
+        color: [0, 153, 255, 1]
+      }
+    }
+  }]);
+  assert.equal(defaults.highlightStyleOptions, defaultHighlightStyleOptions);
 
+  const customPointHighlightStyle = [{ circle: { radius: 9 } }];
   const configured = createPluginOptions({
+    highlightStyleOptions: { Point: customPointHighlightStyle },
     maxWfsQueryLength: 900,
     numericComparisonMode: 'greaterThan',
     searchMode: 'numeric',
@@ -32,6 +50,7 @@ test('preserves plugin defaults and deprecated request-length aliases', () => {
   assert.equal(configured.defaultSearchMode, 'numeric');
   assert.equal(configured.requestQueryLengthLimit, 900);
   assert.equal(configured.wmsOverlayFeatureLimit, 250);
+  assert.equal(configured.highlightStyleOptions.Point, customPointHighlightStyle);
 });
 
 test('keeps configured operator labels in the generated operator choices', () => {

@@ -271,7 +271,7 @@ this repository. It does not declare an independent Origo version range.
 | `wmsOverlayFilterLimit` | value of `zoomToExtentLimit` | Maximum number of WFS features drawn in the temporary overlay fallback used for QGIS WMS image layer filtering. |
 | `featureInfoForResultsLimit` | value of `zoomToExtentLimit` | Maximum number of features opened by the feature-info-for-results action. If this is lower than `limit`, only the first matching results up to this value are sent to the infowindow. The status message warns when this maximum is reached, because additional matches may exist. |
 | `zoomPadding` | `[50, 50, 50, 50]` | Padding used when fitting the map view to result features. |
-| `highlightStyleOptions` | built-in blue/white style | Style options used for highlighted point, line, and polygon features. |
+| `highlightStyleOptions` | 5 px solid blue point; blue/white line and polygon styles | Style options used for highlighted point, line, and polygon features. |
 | `highlightZIndex` | `10` | Z-index for the highlight layer. |
 | `localization` | `undefined` | Optional Origo localization object. If provided, labels are read using the plugin name as the parent key. |
 

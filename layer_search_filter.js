@@ -166,24 +166,13 @@ const FILTER_DIALECTS = {
 const defaultHighlightStyleOptions = {
   Point: [{
     circle: {
-      radius: 8,
-      stroke: {
-        color: [255, 255, 255, 1],
-        width: 3
-      },
-      fill: {
-        color: [0, 153, 255, 0.9]
-      }
-    }
-  }, {
-    circle: {
-      radius: 12,
+      radius: 5,
       stroke: {
         color: [0, 153, 255, 1],
-        width: 3
+        width: 0
       },
       fill: {
-        color: [0, 153, 255, 0.15]
+        color: [0, 153, 255, 1]
       }
     }
   }],
