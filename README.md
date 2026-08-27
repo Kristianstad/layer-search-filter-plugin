@@ -12,7 +12,7 @@ the global map search.
 
 ## Quick start
 
-## Download built files [here](https://nightly.link/Kristianstad/layer-search-filter-plugin/workflows/build/main/layer-search-filter-plugin-built-assets.zip).
+## Download built files [here](https://nightly.link/Kristianstad/layer-search-filter-plugin/workflows/build/main/layersearch-built-assets.zip).
 
 ### Load the plugin in `index.html`
 
