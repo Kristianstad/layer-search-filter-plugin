@@ -1,30 +1,24 @@
 name: Build and package the layer search plugin
-
 on:
   workflow_dispatch:
-  push:               # Automatiskt triggad vid commit
+  push:
     branches: [ main ]
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Klona repot
-        uses: actions/checkout@v4
-
+        uses: actions/checkout@v5
       - name: Sätt upp Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
-          node-version: '20'
-
+          node-version: '22'
       - name: Installera beroenden
         run: npm install
-
       - name: Bygg projektet
         run: npm run build
-
       - name: Packa artefakter (build)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: swiper-built-assets
           path: build/
